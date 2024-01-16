@@ -1,0 +1,193 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+        
+        <link rel="stylesheet" href="{% static 'shop/style.css' %}">
+    </head>
+    <body>
+
+        <div class="container">
+
+
+{% comment %} ----------------------------------------------------------------------   navbar   ---------------------------------------------------------------------- {% endcomment %}            
+
+            <div class="row">
+                <div class="col-md-12" >
+                    <nav class="navbar navbar-expand-lg bg-dark">
+                    <div class="container-fluid">
+                        <a class="navbar-brand text-light" href="#"><i class="bi bi-bag-heart"></i>Ecom.io</a>
+
+                        
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="true" aria-label="Toggle navigation">
+                        <i class="bi bi-list"></i>
+                        </button>
+
+                
+                        <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                            <a class="nav-link active text-light" aria-current="page" href="http://127.0.0.1:8000/">Home</a>
+                            </li>
+                            <li class="nav-item">
+                            <a class="nav-link text-light" href="#">Features</a>
+                            </li>
+                            <li class="nav-item">
+
+        <div class="dropdown">
+            <button id="cart"  class="btn btn-outline-light dropdown-toggle category-button" type="button" data-bs-toggle="dropdown"aria-expanded="false">
+                <i class="bi bi-cart3"></i>(0)
+            </button>
+            <ul id="cartlist" class="dropdown-menu">
+                <li><h7 class="dropdown-item">Cart Empty</h7></li>
+            </ul>
+        </div>
+
+                            </li>
+                        </ul>
+                        </div>
+                    </div>
+                    </nav>                    
+                </div>    
+            </div>     
+
+
+
+{% comment %} ----------------------------------------------------------------------   searching  ---------------------------------------------------------------------- {% endcomment %}
+
+            <div class="row pt-4">
+                <div class="col-12">
+                    <form class="card card-sm">
+                        <div class="card-body row no-gytters align-items-center">
+                            <div class="col">
+                                <input type="search" name='item_name' placeholder='Search For Products' class="form-control form-control-borderless">
+                            </div> 
+                             <div class="col-auto">
+                                <button class="btn btn-outline-success" type="submit">Search</button>
+                            </div>  
+                        </div>  
+                    </form>  
+                </div>  
+            </div>    
+
+{% comment %} ----------------------------------------------------------------------   card   ---------------------------------------------------------------------- {% endcomment %}
+
+            <div class="row">
+                {% for product in product_objects %}
+                <div class="col col-12 col-sm-12 col-md-6 col-lg-3 my-4 ">
+                    <div class="card">
+                        <img id="im{{ product.id }}" src="{{product.image}}" class="card-img-top">
+                        <div class="card-body">
+                            <div id="nm{{ product.id }}" class="card-title">
+                                <h2>{{ product.title }}</h2>
+                            </div> 
+                            <div id="p{{ product.id }}" class="card-text">
+                                {{product.discount_price}}
+                            </div>    
+                            <a href="/{{product.id}}" class="btn btn-warning">View <i class="bi bi-view-list"></i></a>
+                            <button id="{{product.id}}" class="btn atc btn-outline-primary ">Add To Cart <i class="bi bi-cart-plus"></i></button>
+                        </div>    
+                    </div>    
+                </div>
+                {% endfor %} 
+            </div> 
+            
+{% comment %} ----------------------------------------------------------------------   pageing   ---------------------------------------------------------------------- {% endcomment %}
+            
+            <div class="row">
+                <div class="col offset-sm-4 offset-md-5">
+                    <ul class="pagination">
+                        {% if product_objects.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ product_objects.previous_page_number }} "> Previous </a>
+                            </li>    
+                        {% endif %}
+                            <li class="page-item active">
+                                <a class="page-link" href="?page={{ product_objects.number }} "> {{ product_objects }} </a>
+                            </li>    
+                        {% if product_objects.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ product_objects.next_page_number }} "> Next </a>
+                            </li>    
+                        {% endif %}
+                    </ul>      
+                </div>
+            </div>
+
+{% comment %} ----------------------------------------------------------------------   end  ---------------------------------------------------------------------- {% endcomment %}                
+
+        </div>    
+    </body>
+    <script type="text/javascript">
+        
+        if(localStorage.getItem('cart')==null) {
+            var cart = {};
+        }
+        else{
+            cart = JSON.parse(localStorage.getItem('cart'));
+        }
+
+        $(document).on('click','.atc',function(){     
+            var item_id = this.id.toString()
+
+            if (cart[item_id]!=undefined){
+                quantity = cart[item_id][0] + 1;
+                cart[item_id][0] = quantity;
+                cart[item_id][3] += parseFloat(document.getElementById("p"+ item_id).innerHTML);
+            }
+            else{
+                quantity = 1;
+                name = document.getElementById('nm'+item_id).innerText;
+                img = document.getElementById("im"+ item_id).src;
+                price = parseFloat(document.getElementById("p"+ item_id).innerHTML);
+                cart[item_id]=[quantity,name,img,price];
+            }
+            localStorage.setItem('cart',JSON.stringify(cart));
+            document.getElementById("cart").innerHTML = '<i class="bi bi-cart3"></i>(' + Object.keys(cart).length + ")";
+            
+            DisplayCart(cart);
+        });
+
+        
+        function DisplayCart(cart){
+            var cartString = "";
+            var cartIndex = 1;
+            for(var x in cart){
+                cartString += '<li><a class="dropdown-item" href="#"><img src="'+ document.getElementById("im"+ x).src +'" width="50">&nbsp&nbsp' + document.getElementById('nm'+x).innerText + '(' + cart[x][0] +')</a></li>';
+                cartIndex += 1;
+            }
+            cartString += '<li><a href="/checkout" class="btn btn-warning mx-3 px-4">Checkout</a></li>';
+            document.getElementById("cartlist").innerHTML = cartString;
+        }
+        DisplayCart(cart);
+        
+        
+
+
+    </script>    
+    
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+   

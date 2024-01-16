@@ -1,0 +1,99 @@
+{% extends "shop/base.html" %}
+
+{% block body %}
+
+      <div class="container">
+        <div class="row my-4">
+          <div class="col col-12 col-sm-12 col-lg-5">
+            <ol id="item_list" class="list-group list-group border border-dark">
+            </ol>
+          </div>
+          <div class="col col-12 col-sm-12 col-lg-7">
+
+<div class="container border border-dark rounded my-sm-4 my-lg-0">
+<form method="POST">
+  {% csrf_token %}
+  <input type="hidden" id="items" name="items">
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="inputEmail4">Name</label>
+      <input type="text" class="form-control" id="name" name="name">
+    </div>
+    <div class="form-group col-md-6">
+      <label for="inputPassword4">Email</label>
+      <input type="text" class="form-control" id="email" name="email">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputAddress">Address</label>
+    <input type="text" class="form-control" id="address" name="address">
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="inputCity">City</label>
+      <input type="text" class="form-control" id="city" name="city">
+    </div>
+    <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="inputCity">State</label>
+      <input type="text" class="form-control" id="state" name="state">
+    </div>
+    <div class="form-group col-md-2">
+      <label for="inputZip">Zip</label>
+      <input type="text" class="form-control" id="zip" name="zip">
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary my-2">Place oder</button>
+</form>
+</div>
+
+
+        </div>    
+      </div>
+
+      
+
+</body>
+
+<script>
+  if(localStorage.getItem('cart')==null){
+    var card = {};
+  }
+  else{
+    card = JSON.parse(localStorage.getItem('cart'));
+  }
+  let total = 0;
+  for (item in card){
+    let name = card[item][1];
+    let quantity = card[item][0];
+    let img = card[item][2];
+    let price = card[item][3];
+    total = total + price;
+
+    itemString = `<li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                  <div class="container">
+        <div class="row">
+            <div class="col-3">
+                        <img src="${img}" width=100%%">
+            </div>
+
+            <div class="col-6">
+                        <h4 class="pt-3">${name}</h4>
+                        <h6 class="text-success">₹${price}</h6>
+            </div>
+            <div class="col-2">
+                        <span class="badge bg-primary rounded-pill mt-4">${quantity}</span>
+            </div>
+          </div></li>`
+    $('#item_list').append(itemString);            
+  }
+  $('#item_list').append(` <li class="list-group-item d-flex justify-content-between align-items-start">
+  
+    <h2 class="mx-5 text-success">Total = ₹${total}</h2>
+  
+  </li> `);
+  $('#items').val(JSON.stringify(card));
+</script>  
+
+{% endblock %}
